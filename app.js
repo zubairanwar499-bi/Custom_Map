@@ -1534,10 +1534,57 @@ function checkUrlParams() {
   const params = new URLSearchParams(window.location.search);
   const themeParam = params.get('theme');
   const modeParam = params.get('mode');
+  const countryParam = params.get('country') || params.get('c');
+  const siteParam = params.get('site') || params.get('s');
+  const valuesParam = params.get('v');
   const dataParam = params.get('data');
 
   if (themeParam) switchTheme(themeParam);
   if (modeParam) switchMode(modeParam);
+
+  // Compact Value Updates: e.g. v=Sudair:282,ASB2:301
+  if (valuesParam) {
+    try {
+      const pairs = decodeURIComponent(valuesParam).split(',');
+      pairs.forEach(p => {
+        const parts = p.split(':');
+        const name = parts[0];
+        const valStr = parts[1];
+        const site = State.sites.find(s => s.id.toLowerCase() === name.toLowerCase() || s.name.toLowerCase().includes(name.toLowerCase()));
+        if (site && valStr) {
+          site.val = parseFloat(valStr);
+          site.kpi_formatted = `${site.val} Tested`;
+        }
+      });
+      updateData({ sites: State.sites });
+    } catch (e) {
+      console.warn("Could not parse compact values:", e);
+    }
+  }
+
+  // Country Filter: e.g. country=KSA
+  if (countryParam) {
+    const cUpper = countryParam.toUpperCase();
+    const matchedSites = State.sites.filter(s => s.country.toUpperCase() === cUpper);
+    if (matchedSites.length > 0) {
+      const avgLat = matchedSites.reduce((a, b) => a + b.lat, 0) / matchedSites.length;
+      const avgLon = matchedSites.reduce((a, b) => a + b.lon, 0) / matchedSites.length;
+      const pos = latLonToVector3(avgLat, avgLon, GLOBE_RADIUS, 18);
+      setTimeout(() => flyToCamera(pos, new THREE.Vector3(0, 0, 0), 1200), 500);
+    }
+  }
+
+  // Single Site Focus: e.g. site=Sudair
+  if (siteParam) {
+    const sLower = siteParam.toLowerCase();
+    const found = State.sites.find(s => s.id.toLowerCase().includes(sLower) || s.name.toLowerCase().includes(sLower));
+    if (found) {
+      const pos = latLonToVector3(found.lat, found.lon, GLOBE_RADIUS, 15);
+      setTimeout(() => flyToCamera(pos, new THREE.Vector3(0, 0, 0), 1200), 500);
+    }
+  }
+
+  // Legacy dataParam (if provided)
   if (dataParam) {
     try {
       const parsed = JSON.parse(decodeURIComponent(dataParam));
