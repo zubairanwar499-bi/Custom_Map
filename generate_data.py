@@ -1,0 +1,179 @@
+# Helper to generate optimized Pakistan and Global GeoJSON coordinates for 3D extrusion
+import json
+import math
+
+# Geo coordinates for Pakistan Provinces (simplified polygon vertices for smooth 3D extrusion)
+# Coordinates in [longitude, latitude]
+pakistan_provinces = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-PB",
+                "name": "Punjab",
+                "capital": "Lahore",
+                "default_val": 88.5,
+                "color": "#4ade80",
+                "center": [72.7, 31.1]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [71.5, 32.8], [72.8, 33.6], [73.8, 33.0], [74.5, 32.5],
+                    [75.0, 31.8], [74.4, 31.1], [74.2, 30.2], [73.5, 29.8],
+                    [72.5, 29.2], [71.4, 28.3], [70.2, 28.5], [69.9, 29.4],
+                    [70.5, 30.6], [70.9, 31.8], [71.5, 32.8]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-SD",
+                "name": "Sindh",
+                "capital": "Karachi",
+                "default_val": 72.3,
+                "color": "#60a5fa",
+                "center": [68.9, 26.1]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [68.2, 28.3], [69.8, 28.4], [70.3, 27.5], [71.0, 26.5],
+                    [71.1, 24.8], [69.5, 24.1], [68.1, 23.7], [67.3, 24.5],
+                    [66.7, 24.9], [67.8, 26.1], [67.8, 27.5], [68.2, 28.3]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-KP",
+                "name": "Khyber Pakhtunkhwa",
+                "capital": "Peshawar",
+                "default_val": 64.8,
+                "color": "#facc15",
+                "center": [71.5, 34.5]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [71.0, 36.5], [72.5, 36.8], [73.5, 35.8], [73.4, 34.6],
+                    [72.8, 33.7], [71.5, 33.1], [70.3, 31.8], [69.8, 32.1],
+                    [69.7, 33.5], [71.1, 34.2], [71.2, 35.3], [71.0, 36.5]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-BA",
+                "name": "Balochistan",
+                "capital": "Quetta",
+                "default_val": 52.0,
+                "color": "#f87171",
+                "center": [65.3, 28.4]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [66.5, 31.9], [69.5, 31.8], [69.9, 29.5], [68.2, 28.3],
+                    [67.8, 26.0], [66.7, 24.9], [64.5, 25.2], [62.0, 25.2],
+                    [61.2, 25.8], [61.8, 27.8], [61.0, 29.8], [63.2, 29.5],
+                    [64.5, 30.5], [66.5, 31.9]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-GB",
+                "name": "Gilgit-Baltistan",
+                "capital": "Gilgit",
+                "default_val": 79.4,
+                "color": "#fb923c",
+                "center": [75.3, 35.8]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [73.5, 35.8], [72.5, 36.8], [74.5, 37.1], [76.5, 36.5],
+                    [77.6, 35.4], [76.2, 34.8], [74.8, 35.0], [73.5, 35.8]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-AJ",
+                "name": "Azad Jammu & Kashmir",
+                "capital": "Muzaffarabad",
+                "default_val": 84.0,
+                "color": "#ec4899",
+                "center": [73.8, 33.9]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [73.4, 34.6], [74.5, 34.8], [74.4, 33.4], [73.8, 33.0],
+                    [73.3, 33.8], [73.4, 34.6]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "PK-IS",
+                "name": "Islamabad ICT",
+                "capital": "Islamabad",
+                "default_val": 96.2,
+                "color": "#38bdf8",
+                "center": [73.05, 33.7]
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [72.95, 33.65], [73.18, 33.65], [73.20, 33.80], [72.95, 33.80], [72.95, 33.65]
+                ]]
+            }
+        }
+    ]
+}
+
+# Key sample Sites for dynamic points & 3D city buildings
+sample_sites = [
+    {"id": "S01", "name": "Karachi Mega Port & Terminal", "country": "Pakistan", "region": "Sindh", "lat": 24.8607, "lon": 67.0011, "val": 98.4, "status": "Operational", "type": "Port / Logistics", "kpi_label": "Throughput (TEU)", "kpi_formatted": "4.8M TEU"},
+    {"id": "S02", "name": "Lahore Tech Hub & Data Center", "country": "Pakistan", "region": "Punjab", "lat": 31.5204, "lon": 74.3587, "val": 91.2, "status": "Operational", "type": "HQ / Data Center", "kpi_label": "System Uptime", "kpi_formatted": "99.98%"},
+    {"id": "S03", "name": "Islamabad Federal Hub", "country": "Pakistan", "region": "Islamabad ICT", "lat": 33.6844, "lon": 73.0479, "val": 95.8, "status": "Operational", "type": "Command Center", "kpi_label": "Network Traffic", "kpi_formatted": "12.4 Gbps"},
+    {"id": "S04", "name": "Gwadar Deep Sea Port & Free Zone", "country": "Pakistan", "region": "Balochistan", "lat": 25.1264, "lon": 62.3225, "val": 83.1, "status": "Active Project", "type": "Maritime Harbor", "kpi_label": "Berth Utilization", "kpi_formatted": "86.5%"},
+    {"id": "S05", "name": "Peshawar Industrial Corridor", "country": "Pakistan", "region": "Khyber Pakhtunkhwa", "lat": 34.0151, "lon": 71.5249, "val": 71.3, "status": "Operational", "type": "Manufacturing", "kpi_label": "Daily Output", "kpi_formatted": "18.2K Units"},
+    {"id": "S06", "name": "Petronas KLCC Twin Towers & Hub", "country": "Malaysia", "region": "Kuala Lumpur", "lat": 3.1578, "lon": 101.7118, "val": 97.6, "status": "Operational", "type": "3D Smart City / Campus", "kpi_label": "Tower Energy Eff", "kpi_formatted": "94.2%"},
+    {"id": "S07", "name": "Dubai Burj & Logistics Gateway", "country": "United Arab Emirates", "region": "Dubai", "lat": 25.1972, "lon": 55.2744, "val": 94.0, "status": "Operational", "type": "Finance & Trade", "kpi_label": "Volume Index", "kpi_formatted": "92.4%"},
+    {"id": "S08", "name": "London Canary Wharf Financial Hub", "country": "United Kingdom", "region": "London", "lat": 51.5055, "lon": -0.0235, "val": 88.0, "status": "Operational", "type": "Global Finance", "kpi_label": "Transaction Flow", "kpi_formatted": "$3.2B / day"},
+    {"id": "S09", "name": "Riyadh Digital City & Cloud Hub", "country": "Saudi Arabia", "region": "Riyadh", "lat": 24.7136, "lon": 46.6753, "val": 89.5, "status": "Operational", "type": "Cloud Infrastructure", "kpi_label": "Compute Load", "kpi_formatted": "88.1%"},
+    {"id": "S10", "name": "Singapore Jurong Innovation District", "country": "Singapore", "region": "Singapore", "lat": 1.3521, "lon": 103.8198, "val": 96.5, "status": "Operational", "type": "Advanced Tech", "kpi_label": "Smart Grid Index", "kpi_formatted": "99.1%"}
+]
+
+# Sample dynamic arcs (connecting sites)
+sample_arcs = [
+    {"from": "Karachi Mega Port & Terminal", "to": "Lahore Tech Hub & Data Center", "val": 95, "color": "#00f0ff"},
+    {"from": "Karachi Mega Port & Terminal", "to": "Gwadar Deep Sea Port & Free Zone", "val": 88, "color": "#3b82f6"},
+    {"from": "Lahore Tech Hub & Data Center", "to": "Islamabad Federal Hub", "val": 92, "color": "#10b981"},
+    {"from": "Islamabad Federal Hub", "to": "Peshawar Industrial Corridor", "val": 75, "color": "#f59e0b"},
+    {"from": "Karachi Mega Port & Terminal", "to": "Dubai Burj & Logistics Gateway", "val": 94, "color": "#8b5cf6"},
+    {"from": "Dubai Burj & Logistics Gateway", "to": "Petronas KLCC Twin Towers & Hub", "val": 89, "color": "#ec4899"},
+    {"from": "Petronas KLCC Twin Towers & Hub", "to": "Singapore Jurong Innovation District", "val": 97, "color": "#06b6d4"},
+    {"from": "Dubai Burj & Logistics Gateway", "to": "London Canary Wharf Financial Hub", "val": 86, "color": "#f43f5e"}
+]
+
+data = {
+    "provinces": pakistan_provinces,
+    "sites": sample_sites,
+    "arcs": sample_arcs
+}
+
+with open("geo_data.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=2)
+
+print("Saved geo_data.json successfully with provinces, sites, and arcs.")

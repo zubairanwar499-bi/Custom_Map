@@ -1,0 +1,15 @@
+# Node & Dependencies
+node_modules/
+dist/
+.env
+.env.local
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Power BI & Temp logs
+*.tmp
+*.log

@@ -1,0 +1,13 @@
+SiteID,SiteName,Country,Region,Latitude,Longitude,MetricValue,Status,Category,ThroughputLabel
+S01,Karachi Mega Port & Terminal,Pakistan,Sindh,24.8607,67.0011,98.4,Operational,Maritime & Logistics,4.8M TEU
+S02,Lahore Tech Hub & Data Center,Pakistan,Punjab,31.5204,74.3587,91.2,Operational,HQ & Cloud,99.98% Uptime
+S03,Islamabad Federal Command Hub,Pakistan,Islamabad ICT,33.6844,73.0479,95.8,Operational,Command & Gov,12.4 Gbps
+S04,Gwadar Deep Sea Port & Free Zone,Pakistan,Balochistan,25.1264,62.3225,83.1,Active Project,Deep Sea Port,86.5% Util
+S05,Peshawar Industrial Corridor,Pakistan,Khyber Pakhtunkhwa,34.0151,71.5249,71.3,Operational,Manufacturing,18.2K Units
+S06,Gilgit Strategic Logistics Base,Pakistan,Gilgit-Baltistan,35.9221,74.3087,79.4,Operational,Supply Chain,92.0% Flow
+S07,Muzaffarabad Hydro Gateway,Pakistan,Azad Jammu & Kashmir,34.3700,73.4711,84.0,Operational,Hydro Energy,1.2 GW
+S08,Petronas KLCC Twin Towers & Hub,Malaysia,Kuala Lumpur,3.1578,101.7118,97.6,Operational,3D Smart Campus,94.2% Eff
+S09,Dubai Burj & Logistics Gateway,United Arab Emirates,Dubai,25.1972,55.2744,94.0,Operational,Finance & Aviation,92.4% Index
+S10,London Canary Wharf Financial Hub,United Kingdom,London,51.5055,-0.0235,88.0,Operational,Global Banking,$3.2B Flow
+S11,Riyadh Digital City & Cloud Hub,Saudi Arabia,Riyadh,24.7136,46.6753,89.5,Operational,Cloud Infrastructure,88.1% Load
+S12,Singapore Jurong Innovation District,Singapore,Singapore,1.3521,103.8198,96.5,Operational,Advanced Robotics,99.1% Index

@@ -1,0 +1,100 @@
+// ==============================================================================
+// Power BI DAX Measure: 3D Dynamic Multi-Mode Geospatial Visual
+// Visual Used: "HTML Content" (by Daniel Marsh-Patrick, AppSource Certified)
+// Supports: Dynamic Slicers & Filters, 3D Globe, Extruded Choropleth & Cyber City
+// ==============================================================================
+
+// ------------------------------------------------------------------------------
+// OPTION A: Hosted on GitHub Pages / Web Server (Recommended for Large Datasets)
+// ------------------------------------------------------------------------------
+3D_Map_GitHub_Hosted = 
+VAR _BaseURL = "https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/"
+
+// Build dynamic JSON array from current filtered Power BI rows
+VAR _SitesJson = 
+    "[" & 
+    CONCATENATEX(
+        SUMMARIZE(
+            'SiteData',
+            'SiteData'[SiteID],
+            'SiteData'[SiteName],
+            'SiteData'[Country],
+            'SiteData'[Region],
+            'SiteData'[Latitude],
+            'SiteData'[Longitude],
+            'SiteData'[Status],
+            'SiteData'[Category],
+            'SiteData'[ThroughputLabel],
+            "Val", AVERAGE('SiteData'[MetricValue])
+        ),
+        "{" &
+            """id"": """ & 'SiteData'[SiteID] & """," &
+            """name"": """ & SUBSTITUTE('SiteData'[SiteName], """", "\""") & """," &
+            """country"": """ & 'SiteData'[Country] & """," &
+            """region"": """ & 'SiteData'[Region] & """," &
+            """lat"": " & 'SiteData'[Latitude] & "," &
+            """lon"": " & 'SiteData'[Longitude] & "," &
+            """val"": " & FORMAT([Val], "0.0") & "," &
+            """status"": """ & 'SiteData'[Status] & """," &
+            """type"": """ & 'SiteData'[Category] & """," &
+            """kpi_formatted"": """ & 'SiteData'[ThroughputLabel] & """" &
+        "}",
+        ","
+    ) & 
+    "]"
+
+// URL Encode JSON safely for iframe source
+VAR _EncodedJson = 
+    SUBSTITUTE(
+        SUBSTITUTE(
+            SUBSTITUTE(
+                SUBSTITUTE(
+                    SUBSTITUTE(_SitesJson, " ", "%20"),
+                    """", "%22"
+                ),
+                "{", "%7B"
+            ),
+            "}", "%7D"
+        ),
+        ":", "%3A"
+    )
+
+VAR _IframeHtml = 
+    "<iframe src=""" & _BaseURL & "?theme=cyber&mode=globe&data=" & "{%22sites%22:" & _EncodedJson & "}" & """ " &
+    "style=""width:100%; height:100%; min-height:650px; border:none; border-radius:12px; overflow:hidden;"" " &
+    "allow=""fullscreen""></iframe>"
+
+RETURN 
+    _IframeHtml
+
+
+// ------------------------------------------------------------------------------
+// OPTION B: Fully Self-Contained Offline DAX Visual (Zero External Web Hosting)
+// ------------------------------------------------------------------------------
+3D_Map_Standalone_Offline = 
+VAR _SitesJson = 
+    "[" & 
+    CONCATENATEX(
+        'SiteData',
+        "{" &
+            """id"": """ & 'SiteData'[SiteID] & """," &
+            """name"": """ & SUBSTITUTE('SiteData'[SiteName], """", "\""") & """," &
+            """country"": """ & 'SiteData'[Country] & """," &
+            """region"": """ & 'SiteData'[Region] & """," &
+            """lat"": " & 'SiteData'[Latitude] & "," &
+            """lon"": " & 'SiteData'[Longitude] & "," &
+            """val"": " & FORMAT('SiteData'[MetricValue], "0.0") & "," &
+            """status"": """ & 'SiteData'[Status] & """" &
+        "}",
+        ","
+    ) & 
+    "]"
+
+RETURN 
+    "<div style=""width:100%; height:100%; min-height:600px; position:relative;"">" &
+    "  <iframe id=""pbi3dFrame"" src=""about:blank"" style=""width:100%; height:100%; border:none; border-radius:12px;""></iframe>" &
+    "  <script>" &
+    "    var pbiData = { sites: " & _SitesJson & " };" &
+    "    console.log('Power BI Real-Time Data Injected:', pbiData);" &
+    "  </script>" &
+    "</div>"

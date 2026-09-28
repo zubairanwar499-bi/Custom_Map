@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power BI 3D Dynamic Multi-Mode Map Visual</title>
+  
+  <!-- Font & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Three.js & OrbitControls via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body class="theme-cyber">
+
+  <!-- 3D Canvas Mount Point -->
+  <div id="canvas3d"></div>
+
+  <!-- Heads-Up Display (HUD) Overlay -->
+  <div class="hud-layer">
+    
+    <!-- Top Navigation Bar -->
+    <header class="top-bar hud-interactive">
+      <div class="brand-badge">
+        <i class="fa-solid fa-earth-asia brand-icon"></i>
+        <div class="brand-text">
+          <h1>GEOSPATIAL 3D INTELLIGENCE</h1>
+          <span>Power BI Enterprise Visual Engine</span>
+        </div>
+      </div>
+
+      <!-- Mode Selector Pills -->
+      <nav class="mode-nav" aria-label="Visual Modes">
+        <button class="mode-btn active" data-mode="globe" title="3D Earth Orbit View">
+          <i class="fa-solid fa-globe"></i>
+          <span>Globe 3D</span>
+        </button>
+        <button class="mode-btn" data-mode="choropleth" title="3D Extruded Provinces/Regions">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>3D Choropleth</span>
+        </button>
+        <button class="mode-btn" data-mode="city" title="3D Cyber City / KLCC Campus">
+          <i class="fa-solid fa-city"></i>
+          <span>3D Cyber City</span>
+        </button>
+        <button class="mode-btn" data-mode="flow" title="Global Arc & Network Flow">
+          <i class="fa-solid fa-route"></i>
+          <span>Arc Flow</span>
+        </button>
+      </nav>
+
+      <!-- Utility Controls -->
+      <div class="controls-cluster">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="siteSearch" placeholder="Search site or region..." autocomplete="off">
+        </div>
+        <button class="icon-btn" id="btnToggleRotate" title="Toggle Auto-Rotation">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+        <button class="icon-btn" id="btnToggleTheme" title="Switch Theme (Cyber / Satellite / Executive)">
+          <i class="fa-solid fa-palette"></i>
+        </button>
+        <button class="icon-btn" id="btnFullscreen" title="Toggle Fullscreen">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top KPI Cards Deck -->
+    <div class="kpi-row hud-interactive">
+      <div class="kpi-card">
+        <div class="kpi-title">Monitored Facilities</div>
+        <div class="kpi-val">
+          <span id="kpiTotalSites">12</span>
+          <span class="kpi-trend up"><i class="fa-solid fa-arrow-trend-up"></i> Live</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Network Index</div>
+        <div class="kpi-val">
+          <span id="kpiAvgHealth">91.4%</span>
+          <span class="kpi-trend up"><i class="fa-solid fa-circle-check"></i> Optimal</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Logistics & Data Arcs</div>
+        <div class="kpi-val">
+          <span id="kpiNetworkArcs">8</span>
+          <span class="kpi-trend up"><i class="fa-solid fa-bolt"></i> 100% Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom HUD Bar -->
+    <footer class="bottom-bar">
+      <!-- Gradient Scale Legend -->
+      <div class="legend-card hud-interactive">
+        <div class="legend-title">KPI Metric Distribution</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels">
+          <span>0% Baseline</span>
+          <span>50% Mid</span>
+          <span>100% Peak</span>
+        </div>
+      </div>
+
+      <!-- Live Dynamic Controller Drawer -->
+      <div class="data-controller hud-interactive collapsed">
+        <div class="controller-header">
+          <h3><i class="fa-solid fa-sliders"></i> Dynamic Value Controller</h3>
+          <i class="fa-solid fa-chevron-up"></i>
+        </div>
+        <div class="controller-body">
+          <div class="ctrl-item">
+            <label>Punjab KPI Index <span id="sliderPunjabVal">88.5%</span></label>
+            <input type="range" id="sliderPunjab" min="10" max="100" value="88.5" step="0.5">
+          </div>
+          <div class="ctrl-item">
+            <label>Sindh KPI Index <span id="sliderSindhVal">72.3%</span></label>
+            <input type="range" id="sliderSindh" min="10" max="100" value="72.3" step="0.5">
+          </div>
+          <div class="ctrl-item">
+            <label>Khyber Pakhtunkhwa <span id="sliderKPKVal">64.8%</span></label>
+            <input type="range" id="sliderKPK" min="10" max="100" value="64.8" step="0.5">
+          </div>
+          <div class="ctrl-item">
+            <label>Balochistan Index <span id="sliderBalochistanVal">52.0%</span></label>
+            <input type="range" id="sliderBalochistan" min="10" max="100" value="52.0" step="0.5">
+          </div>
+          <div class="quick-actions">
+            <button class="action-btn-sm" onclick="switchMode('globe')">🌐 Globe</button>
+            <button class="action-btn-sm" onclick="switchMode('choropleth')">🗺️ 3D Map</button>
+            <button class="action-btn-sm" onclick="switchMode('city')">🏙️ 3D City</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Interactive 3D Tooltip Card -->
+  <div id="tooltip3d">
+    <div class="tooltip-header">
+      <div class="tooltip-title" id="ttTitle">Site Name</div>
+      <div class="tooltip-badge" id="ttBadge">Operational</div>
+    </div>
+    <div class="tooltip-meta" id="ttMeta">Region, Country</div>
+    <div class="tooltip-val-row">
+      <span class="tooltip-val-label" id="ttValLabel">Metric Value</span>
+      <span class="tooltip-val-num" id="ttValNum">98.4%</span>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
