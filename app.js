@@ -29,91 +29,790 @@ const State = {
 
 // --- Embedded Default Geo Data (Pakistan & Global Hubs) ---
 const DEFAULT_GEO_DATA = {
-  provinces: [
+  "provinces": [
     {
-      id: "PK-PB",
-      name: "Punjab",
-      capital: "Lahore",
-      val: 88.5,
-      color: "#4ade80",
-      center: [72.7, 31.1],
-      coords: [[71.5, 32.8], [72.8, 33.6], [73.8, 33.0], [74.5, 32.5], [75.0, 31.8], [74.4, 31.1], [74.2, 30.2], [73.5, 29.8], [72.5, 29.2], [71.4, 28.3], [70.2, 28.5], [69.9, 29.4], [70.5, 30.6], [70.9, 31.8], [71.5, 32.8]]
+      "id": "KSA",
+      "name": "Saudi Arabia",
+      "capital": "Riyadh",
+      "val": 1356,
+      "color": "#10b981",
+      "center": [
+        45.0,
+        24.0
+      ],
+      "coords": [
+        [
+          36.5,
+          29.5
+        ],
+        [
+          42.0,
+          31.5
+        ],
+        [
+          48.0,
+          30.0
+        ],
+        [
+          50.0,
+          26.5
+        ],
+        [
+          55.0,
+          22.5
+        ],
+        [
+          52.0,
+          19.0
+        ],
+        [
+          44.0,
+          17.5
+        ],
+        [
+          42.5,
+          16.5
+        ],
+        [
+          39.0,
+          21.0
+        ],
+        [
+          35.5,
+          28.0
+        ],
+        [
+          36.5,
+          29.5
+        ]
+      ]
     },
     {
-      id: "PK-SD",
-      name: "Sindh",
-      capital: "Karachi",
-      val: 72.3,
-      color: "#60a5fa",
-      center: [68.9, 26.1],
-      coords: [[68.2, 28.3], [69.8, 28.4], [70.3, 27.5], [71.0, 26.5], [71.1, 24.8], [69.5, 24.1], [68.1, 23.7], [67.3, 24.5], [66.7, 24.9], [67.8, 26.1], [67.8, 27.5], [68.2, 28.3]]
+      "id": "UAE",
+      "name": "United Arab Emirates",
+      "capital": "Abu Dhabi",
+      "val": 298,
+      "color": "#00f0ff",
+      "center": [
+        54.5,
+        24.0
+      ],
+      "coords": [
+        [
+          51.5,
+          24.0
+        ],
+        [
+          54.0,
+          24.5
+        ],
+        [
+          56.0,
+          26.0
+        ],
+        [
+          56.3,
+          24.8
+        ],
+        [
+          55.5,
+          23.0
+        ],
+        [
+          52.5,
+          23.0
+        ],
+        [
+          51.5,
+          24.0
+        ]
+      ]
     },
     {
-      id: "PK-KP",
-      name: "Khyber Pakhtunkhwa",
-      capital: "Peshawar",
-      val: 64.8,
-      color: "#facc15",
-      center: [71.5, 34.5],
-      coords: [[71.0, 36.5], [72.5, 36.8], [73.5, 35.8], [73.4, 34.6], [72.8, 33.7], [71.5, 33.1], [70.3, 31.8], [69.8, 32.1], [69.7, 33.5], [71.1, 34.2], [71.2, 35.3], [71.0, 36.5]]
+      "id": "EGY",
+      "name": "Egypt",
+      "capital": "Cairo",
+      "val": 113,
+      "color": "#f59e0b",
+      "center": [
+        30.0,
+        26.5
+      ],
+      "coords": [
+        [
+          25.0,
+          31.5
+        ],
+        [
+          31.5,
+          31.5
+        ],
+        [
+          34.0,
+          31.2
+        ],
+        [
+          34.0,
+          27.5
+        ],
+        [
+          35.5,
+          22.0
+        ],
+        [
+          25.0,
+          22.0
+        ],
+        [
+          25.0,
+          31.5
+        ]
+      ]
     },
     {
-      id: "PK-BA",
-      name: "Balochistan",
-      capital: "Quetta",
-      val: 52.0,
-      color: "#f87171",
-      center: [65.3, 28.4],
-      coords: [[66.5, 31.9], [69.5, 31.8], [69.9, 29.5], [68.2, 28.3], [67.8, 26.0], [66.7, 24.9], [64.5, 25.2], [62.0, 25.2], [61.2, 25.8], [61.8, 27.8], [61.0, 29.8], [63.2, 29.5], [64.5, 30.5], [66.5, 31.9]]
+      "id": "OMN",
+      "name": "Oman",
+      "capital": "Muscat",
+      "val": 98,
+      "color": "#8b5cf6",
+      "center": [
+        57.0,
+        21.5
+      ],
+      "coords": [
+        [
+          56.0,
+          26.0
+        ],
+        [
+          59.8,
+          22.5
+        ],
+        [
+          59.0,
+          20.5
+        ],
+        [
+          54.0,
+          16.5
+        ],
+        [
+          52.0,
+          19.0
+        ],
+        [
+          55.5,
+          23.0
+        ],
+        [
+          56.0,
+          26.0
+        ]
+      ]
     },
     {
-      id: "PK-GB",
-      name: "Gilgit-Baltistan",
-      capital: "Gilgit",
-      val: 79.4,
-      color: "#fb923c",
-      center: [75.3, 35.8],
-      coords: [[73.5, 35.8], [72.5, 36.8], [74.5, 37.1], [76.5, 36.5], [77.6, 35.4], [76.2, 34.8], [74.8, 35.0], [73.5, 35.8]]
+      "id": "MAR",
+      "name": "Morocco",
+      "capital": "Rabat",
+      "val": 46,
+      "color": "#ec4899",
+      "center": [
+        -7.0,
+        31.0
+      ],
+      "coords": [
+        [
+          -2.0,
+          35.0
+        ],
+        [
+          -1.0,
+          32.0
+        ],
+        [
+          -4.0,
+          29.0
+        ],
+        [
+          -12.0,
+          27.5
+        ],
+        [
+          -10.0,
+          32.0
+        ],
+        [
+          -6.0,
+          35.8
+        ],
+        [
+          -2.0,
+          35.0
+        ]
+      ]
     },
     {
-      id: "PK-AJ",
-      name: "Azad Kashmir",
-      capital: "Muzaffarabad",
-      val: 84.0,
-      color: "#ec4899",
-      center: [73.8, 33.9],
-      coords: [[73.4, 34.6], [74.5, 34.8], [74.4, 33.4], [73.8, 33.0], [73.3, 33.8], [73.4, 34.6]]
+      "id": "JOR",
+      "name": "Jordan",
+      "capital": "Amman",
+      "val": 44,
+      "color": "#38bdf8",
+      "center": [
+        36.5,
+        31.0
+      ],
+      "coords": [
+        [
+          35.0,
+          32.5
+        ],
+        [
+          38.5,
+          32.5
+        ],
+        [
+          39.0,
+          32.0
+        ],
+        [
+          37.0,
+          29.5
+        ],
+        [
+          35.0,
+          29.5
+        ],
+        [
+          35.0,
+          32.5
+        ]
+      ]
     },
     {
-      id: "PK-IS",
-      name: "Islamabad ICT",
-      capital: "Islamabad",
-      val: 96.2,
-      color: "#38bdf8",
-      center: [73.05, 33.7],
-      coords: [[72.95, 33.65], [73.18, 33.65], [73.20, 33.80], [72.95, 33.80], [72.95, 33.65]]
+      "id": "UZB",
+      "name": "Uzbekistan",
+      "capital": "Tashkent",
+      "val": 28,
+      "color": "#f97316",
+      "center": [
+        64.0,
+        41.5
+      ],
+      "coords": [
+        [
+          56.0,
+          45.0
+        ],
+        [
+          60.0,
+          45.5
+        ],
+        [
+          66.0,
+          43.0
+        ],
+        [
+          71.0,
+          41.0
+        ],
+        [
+          67.0,
+          37.5
+        ],
+        [
+          62.0,
+          39.5
+        ],
+        [
+          56.0,
+          41.5
+        ],
+        [
+          56.0,
+          45.0
+        ]
+      ]
+    },
+    {
+      "id": "CHN",
+      "name": "China",
+      "capital": "Beijing",
+      "val": 58,
+      "color": "#ef4444",
+      "center": [
+        105.0,
+        35.0
+      ],
+      "coords": [
+        [
+          80.0,
+          48.0
+        ],
+        [
+          120.0,
+          50.0
+        ],
+        [
+          122.0,
+          30.0
+        ],
+        [
+          110.0,
+          20.0
+        ],
+        [
+          100.0,
+          22.0
+        ],
+        [
+          85.0,
+          28.0
+        ],
+        [
+          75.0,
+          38.0
+        ],
+        [
+          80.0,
+          48.0
+        ]
+      ]
     }
   ],
-  sites: [
-    { id: "S01", name: "Karachi Mega Port & Terminal", country: "Pakistan", region: "Sindh", lat: 24.8607, lon: 67.0011, val: 98.4, status: "Operational", type: "Maritime & Logistics", kpi_label: "Throughput", kpi_formatted: "4.8M TEU" },
-    { id: "S02", name: "Lahore Tech Hub & DC", country: "Pakistan", region: "Punjab", lat: 31.5204, lon: 74.3587, val: 91.2, status: "Operational", type: "HQ & Cloud", kpi_label: "System Uptime", kpi_formatted: "99.98%" },
-    { id: "S03", name: "Islamabad Command Center", country: "Pakistan", region: "Islamabad ICT", lat: 33.6844, lon: 73.0479, val: 95.8, status: "Operational", type: "Federal Command", kpi_label: "Throughput", kpi_formatted: "12.4 Gbps" },
-    { id: "S04", name: "Gwadar Deep Sea Port", country: "Pakistan", region: "Balochistan", lat: 25.1264, lon: 62.3225, val: 83.1, status: "Active Project", type: "Deep Sea Port", kpi_label: "Berth Index", kpi_formatted: "86.5%" },
-    { id: "S05", name: "Peshawar Industrial Corridor", country: "Pakistan", region: "Khyber Pakhtunkhwa", lat: 34.0151, lon: 71.5249, val: 71.3, status: "Operational", type: "Manufacturing", kpi_label: "Daily Output", kpi_formatted: "18.2K Units" },
-    { id: "S06", name: "Petronas KLCC Twin Towers & Hub", country: "Malaysia", region: "Kuala Lumpur", lat: 3.1578, lon: 101.7118, val: 97.6, status: "Operational", type: "3D Smart Campus", kpi_label: "Building Eff", kpi_formatted: "94.2%" },
-    { id: "S07", name: "Dubai Burj Logistics Gateway", country: "UAE", region: "Dubai", lat: 25.1972, lon: 55.2744, val: 94.0, status: "Operational", type: "Finance & Cargo", kpi_label: "Trade Index", kpi_formatted: "92.4%" },
-    { id: "S08", name: "London Canary Wharf Financial Hub", country: "United Kingdom", region: "London", lat: 51.5055, lon: -0.0235, val: 88.0, status: "Operational", type: "Global Banking", kpi_label: "Liquidity", kpi_formatted: "$3.2B Flow" },
-    { id: "S09", name: "Riyadh Digital City & Cloud Hub", country: "Saudi Arabia", region: "Riyadh", lat: 24.7136, lon: 46.6753, val: 89.5, status: "Operational", type: "Cloud Core", kpi_label: "Compute Load", kpi_formatted: "88.1%" },
-    { id: "S10", name: "Singapore Jurong Innovation District", country: "Singapore", region: "Singapore", lat: 1.3521, lon: 103.8198, val: 96.5, status: "Operational", type: "Advanced Tech", kpi_label: "Smart Grid", kpi_formatted: "99.1%" }
+  "sites": [
+    {
+      "id": "Sudair",
+      "name": "Sudair Solar Plant",
+      "country": "KSA",
+      "region": "Riyadh",
+      "lat": 24.761863,
+      "lon": 45.565428,
+      "val": 282,
+      "status": "Operational",
+      "type": "Solar PV Plant",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "282 Tested"
+    },
+    {
+      "id": "ASB2",
+      "name": "ASB2 Substation",
+      "country": "KSA",
+      "region": "Makkah",
+      "lat": 20.767205,
+      "lon": 39.598452,
+      "val": 301,
+      "status": "Operational",
+      "type": "Substation",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "301 Tested"
+    },
+    {
+      "id": "Ar Ras 2",
+      "name": "Ar Ras 2 PV",
+      "country": "KSA",
+      "region": "Al Qassim",
+      "lat": 25.616703,
+      "lon": 43.617783,
+      "val": 294,
+      "status": "Operational",
+      "type": "Solar PV Plant",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "294 Tested"
+    },
+    {
+      "id": "Shuaa 3",
+      "name": "Shuaa 3 PV",
+      "country": "UAE",
+      "region": "Dubai",
+      "lat": 24.724347,
+      "lon": 55.412206,
+      "val": 218,
+      "status": "Operational",
+      "type": "Solar Park",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "218 Tested"
+    },
+    {
+      "id": "Saad-2",
+      "name": "Saad-2 PV",
+      "country": "KSA",
+      "region": "Riyadh",
+      "lat": 25.062915,
+      "lon": 47.561847,
+      "val": 157,
+      "status": "Operational",
+      "type": "Solar PV Plant",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "157 Tested"
+    },
+    {
+      "id": "Ar Ras 1",
+      "name": "Ar Ras 1",
+      "country": "KSA",
+      "region": "Al Qassim",
+      "lat": 25.591473,
+      "lon": 43.624552,
+      "val": 133,
+      "status": "Operational",
+      "type": "Solar PV",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "133 Tested"
+    },
+    {
+      "id": "IBRI - II",
+      "name": "IBRI - II Solar",
+      "country": "Oman",
+      "region": "Dhahirah",
+      "lat": 23.36988,
+      "lon": 56.246772,
+      "val": 98,
+      "status": "Operational",
+      "type": "Solar PV",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "98 Tested"
+    },
+    {
+      "id": "ASB1",
+      "name": "ASB1 Substation",
+      "country": "KSA",
+      "region": "Makkah",
+      "lat": 20.779612,
+      "lon": 39.562565,
+      "val": 92,
+      "status": "Operational",
+      "type": "Substation",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "92 Tested"
+    },
+    {
+      "id": "SAKAKA",
+      "name": "Sakaka Solar",
+      "country": "KSA",
+      "region": "Al Jawf",
+      "lat": 29.737867,
+      "lon": 40.100346,
+      "val": 67,
+      "status": "Operational",
+      "type": "Solar PV",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "67 Tested"
+    },
+    {
+      "id": "NE PVFD-1",
+      "name": "NE PVFD-1",
+      "country": "UAE",
+      "region": "Dubai",
+      "lat": 24.749,
+      "lon": 55.436758,
+      "val": 49,
+      "status": "Operational",
+      "type": "PV Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "49 Tested"
+    },
+    {
+      "id": "Yuanbu 105",
+      "name": "Yuanbu 105 Plant",
+      "country": "China",
+      "region": "Guangdong",
+      "lat": 24.595861,
+      "lon": 112.452111,
+      "val": 38,
+      "status": "Operational",
+      "type": "Renewable",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "38 Tested"
+    },
+    {
+      "id": "Ben Ben 2 - ALCOM",
+      "name": "Ben Ben 2 - ALCOM",
+      "country": "Egypt",
+      "region": "Aswan",
+      "lat": 24.434103,
+      "lon": 32.703136,
+      "val": 34,
+      "status": "Operational",
+      "type": "Solar Park",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "34 Tested"
+    },
+    {
+      "id": "Ben Ben 1 - ACWA",
+      "name": "Ben Ben 1 - ACWA",
+      "country": "Egypt",
+      "region": "Aswan",
+      "lat": 24.434103,
+      "lon": 32.703136,
+      "val": 32,
+      "status": "Operational",
+      "type": "Solar Park",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "32 Tested"
+    },
+    {
+      "id": "KOM OMBO",
+      "name": "KOM OMBO Solar",
+      "country": "Egypt",
+      "region": "Aswan",
+      "lat": 24.470596,
+      "lon": 32.944659,
+      "val": 32,
+      "status": "Operational",
+      "type": "Solar Park",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "32 Tested"
+    },
+    {
+      "id": "Riverside",
+      "name": "Riverside Plant",
+      "country": "Uzbekistan",
+      "region": "Tashkent",
+      "lat": 41.348725,
+      "lon": 69.50193,
+      "val": 28,
+      "status": "Operational",
+      "type": "Renewable Energy",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "28 Tested"
+    },
+    {
+      "id": "Laayoune",
+      "name": "Laayoune PV",
+      "country": "Morocco",
+      "region": "Laayoune",
+      "lat": 27.12428,
+      "lon": -13.206678,
+      "val": 22,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "22 Tested"
+    },
+    {
+      "id": "Mafraq",
+      "name": "Mafraq PV",
+      "country": "Jordan",
+      "region": "Mafraq",
+      "lat": 32.346988,
+      "lon": 36.288437,
+      "val": 22,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "22 Tested"
+    },
+    {
+      "id": "Risha",
+      "name": "Risha PV",
+      "country": "Jordan",
+      "region": "Mafraq",
+      "lat": 32.568948,
+      "lon": 39.006428,
+      "val": 22,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "22 Tested"
+    },
+    {
+      "id": "Layla",
+      "name": "Layla Solar",
+      "country": "KSA",
+      "region": "Riyadh",
+      "lat": 22.309039,
+      "lon": 46.663809,
+      "val": 20,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "20 Tested"
+    },
+    {
+      "id": "Yanghui 50",
+      "name": "Yanghui 50",
+      "country": "China",
+      "region": "Guangdong",
+      "lat": 24.325627,
+      "lon": 112.628062,
+      "val": 20,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "20 Tested"
+    },
+    {
+      "id": "Ouarzazate",
+      "name": "Ouarzazate Solar Complex",
+      "country": "Morocco",
+      "region": "Dr\u00e2a-Tafilalet",
+      "lat": 31.008721,
+      "lon": -6.856381,
+      "val": 18,
+      "status": "Operational",
+      "type": "CSP & PV Complex",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "18 Tested"
+    },
+    {
+      "id": "NE PT",
+      "name": "NE PT",
+      "country": "UAE",
+      "region": "Dubai",
+      "lat": 24.749,
+      "lon": 55.436758,
+      "val": 18,
+      "status": "Operational",
+      "type": "Substation",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "18 Tested"
+    },
+    {
+      "id": "Ben Ben 3 - TK",
+      "name": "Ben Ben 3 - TK",
+      "country": "Egypt",
+      "region": "Aswan",
+      "lat": 24.434103,
+      "lon": 32.703136,
+      "val": 15,
+      "status": "Operational",
+      "type": "Solar PV",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "15 Tested"
+    },
+    {
+      "id": "S3IWP",
+      "name": "S3IWP Desalination Plant",
+      "country": "KSA",
+      "region": "Makkah",
+      "lat": 20.677962,
+      "lon": 39.528296,
+      "val": 12,
+      "status": "Operational",
+      "type": "Desalination & Power",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "12 Tested"
+    },
+    {
+      "id": "NE PVFD-2",
+      "name": "NE PVFD-2",
+      "country": "UAE",
+      "region": "Dubai",
+      "lat": 24.749,
+      "lon": 55.436758,
+      "val": 10,
+      "status": "Operational",
+      "type": "PV Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "10 Tested"
+    },
+    {
+      "id": "AL Kafha",
+      "name": "AL Kafha",
+      "country": "KSA",
+      "region": "Al Qassim",
+      "lat": 26.98731,
+      "lon": 42.991463,
+      "val": 10,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "10 Tested"
+    },
+    {
+      "id": "Shuaa 1",
+      "name": "Shuaa 1",
+      "country": "UAE",
+      "region": "Dubai",
+      "lat": 24.761863,
+      "lon": 55.368542,
+      "val": 10,
+      "status": "Operational",
+      "type": "Solar PV",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "10 Tested"
+    },
+    {
+      "id": "Boujdour",
+      "name": "Boujdour PV",
+      "country": "Morocco",
+      "region": "Laayoune",
+      "lat": 26.125651,
+      "lon": -14.482797,
+      "val": 6,
+      "status": "Operational",
+      "type": "Solar Facility",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "6 Tested"
+    },
+    {
+      "id": "NE CT",
+      "name": "NE CT",
+      "country": "UAE",
+      "region": "Dubai",
+      "lat": 24.749,
+      "lon": 55.436758,
+      "val": 3,
+      "status": "Operational",
+      "type": "Substation",
+      "kpi_label": "Tested Transformers",
+      "kpi_formatted": "3 Tested"
+    }
   ],
-  arcs: [
-    { from: "Karachi Mega Port & Terminal", to: "Lahore Tech Hub & DC", val: 95, color: "#00f0ff" },
-    { from: "Karachi Mega Port & Terminal", to: "Gwadar Deep Sea Port", val: 88, color: "#3b82f6" },
-    { from: "Lahore Tech Hub & DC", to: "Islamabad Command Center", val: 92, color: "#10b981" },
-    { from: "Karachi Mega Port & Terminal", to: "Dubai Burj Logistics Gateway", val: 94, color: "#8b5cf6" },
-    { from: "Dubai Burj Logistics Gateway", to: "Petronas KLCC Twin Towers & Hub", val: 89, color: "#ec4899" },
-    { from: "Petronas KLCC Twin Towers & Hub", to: "Singapore Jurong Innovation District", val: 97, color: "#06b6d4" },
-    { from: "Dubai Burj Logistics Gateway", to: "London Canary Wharf Financial Hub", val: 86, color: "#f43f5e" }
+  "arcs": [
+    {
+      "from": "Sudair Solar Plant",
+      "to": "ASB2 Substation",
+      "val": 300,
+      "color": "#10b981"
+    },
+    {
+      "from": "Sudair Solar Plant",
+      "to": "Ar Ras 2 PV",
+      "val": 294,
+      "color": "#10b981"
+    },
+    {
+      "from": "Sudair Solar Plant",
+      "to": "Shuaa 3 PV",
+      "val": 218,
+      "color": "#00f0ff"
+    },
+    {
+      "from": "Shuaa 3 PV",
+      "to": "IBRI - II Solar",
+      "val": 98,
+      "color": "#8b5cf6"
+    },
+    {
+      "from": "Sudair Solar Plant",
+      "to": "Ben Ben 1 - ACWA",
+      "val": 32,
+      "color": "#f59e0b"
+    },
+    {
+      "from": "Ben Ben 1 - ACWA",
+      "to": "Ouarzazate Solar Complex",
+      "val": 18,
+      "color": "#ec4899"
+    },
+    {
+      "from": "Sudair Solar Plant",
+      "to": "Mafraq PV",
+      "val": 22,
+      "color": "#38bdf8"
+    },
+    {
+      "from": "Sudair Solar Plant",
+      "to": "Riverside Plant",
+      "val": 28,
+      "color": "#f97316"
+    },
+    {
+      "from": "Sudair Solar Plant",
+      "to": "Yuanbu 105 Plant",
+      "val": 38,
+      "color": "#ef4444"
+    }
   ]
 };
 
@@ -126,7 +825,7 @@ State.arcs = JSON.parse(JSON.stringify(DEFAULT_GEO_DATA.arcs));
 const container = document.getElementById('canvas3d');
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-camera.position.set(0, 35, 140);
+camera.position.set(50, 45, 110);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
 renderer.setSize(window.innerWidth, window.innerHeight);

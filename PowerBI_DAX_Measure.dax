@@ -1,55 +1,52 @@
 // ==============================================================================
-// Power BI DAX Measure: 3D Dynamic Multi-Mode Geospatial Visual
+// Power BI DAX Measure: ACWA DGA 3D Geospatial Intelligence Map Visual
 // Visual Used: "HTML Content" (by Daniel Marsh-Patrick, AppSource Certified)
-// Supports: Dynamic Slicers & Filters, 3D Globe, Extruded Choropleth & Cyber City
+// Hosted on GitHub: https://zubairanwar499-bi.github.io/Custom_Map/
 // ==============================================================================
 
-// ------------------------------------------------------------------------------
-// OPTION A: Hosted on GitHub Pages / Web Server (Recommended for Large Datasets)
-// ------------------------------------------------------------------------------
-3D_Map_GitHub_Hosted = 
-VAR _BaseURL = "https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/"
+3D_DGA_Custom_Map = 
+// 1. GitHub Pages deployment link
+VAR _BaseURL = "https://zubairanwar499-bi.github.io/Custom_Map/"
 
-// Build dynamic JSON array from current filtered Power BI rows
-VAR _SitesJson = 
+// 2. Build dynamic JSON from currently filtered Coordinates and Tested transformers
+VAR _PlantsJson = 
     "[" & 
     CONCATENATEX(
-        SUMMARIZE(
-            'SiteData',
-            'SiteData'[SiteID],
-            'SiteData'[SiteName],
-            'SiteData'[Country],
-            'SiteData'[Region],
-            'SiteData'[Latitude],
-            'SiteData'[Longitude],
-            'SiteData'[Status],
-            'SiteData'[Category],
-            'SiteData'[ThroughputLabel],
-            "Val", AVERAGE('SiteData'[MetricValue])
+        FILTER(
+            SUMMARIZE(
+                'Coordinates',
+                'Coordinates'[Plant Name],
+                'Coordinates'[Country],
+                'Coordinates'[Longitude],
+                'Coordinates'[Latitude],
+                "TestedCount", [Tested]
+            ),
+            NOT(ISBLANK('Coordinates'[Plant Name])) && [TestedCount] > 0
         ),
         "{" &
-            """id"": """ & 'SiteData'[SiteID] & """," &
-            """name"": """ & SUBSTITUTE('SiteData'[SiteName], """", "\""") & """," &
-            """country"": """ & 'SiteData'[Country] & """," &
-            """region"": """ & 'SiteData'[Region] & """," &
-            """lat"": " & 'SiteData'[Latitude] & "," &
-            """lon"": " & 'SiteData'[Longitude] & "," &
-            """val"": " & FORMAT([Val], "0.0") & "," &
-            """status"": """ & 'SiteData'[Status] & """," &
-            """type"": """ & 'SiteData'[Category] & """," &
-            """kpi_formatted"": """ & 'SiteData'[ThroughputLabel] & """" &
+            """id"": """ & SUBSTITUTE('Coordinates'[Plant Name], """", "\""") & """," &
+            """name"": """ & SUBSTITUTE('Coordinates'[Plant Name], """", "\""") & """," &
+            """country"": """ & 'Coordinates'[Country] & """," &
+            // Note: In Coordinates table, Longitude column stores Lat and Latitude stores Lon:
+            """lat"": " & 'Coordinates'[Longitude] & "," &
+            """lon"": " & 'Coordinates'[Latitude] & "," &
+            """val"": " & [TestedCount] & "," &
+            """status"": ""Operational""," &
+            """type"": ""Power Substation""," &
+            """kpi_label"": ""Tested Transformers""," &
+            """kpi_formatted"": """ & FORMAT([TestedCount], "#,##0") & " Tested""" &
         "}",
         ","
     ) & 
     "]"
 
-// URL Encode JSON safely for iframe source
+// 3. URL Encode JSON safely for iframe source
 VAR _EncodedJson = 
     SUBSTITUTE(
         SUBSTITUTE(
             SUBSTITUTE(
                 SUBSTITUTE(
-                    SUBSTITUTE(_SitesJson, " ", "%20"),
+                    SUBSTITUTE(_PlantsJson, " ", "%20"),
                     """", "%22"
                 ),
                 "{", "%7B"
@@ -59,42 +56,11 @@ VAR _EncodedJson =
         ":", "%3A"
     )
 
+// 4. Return responsive HTML iframe
 VAR _IframeHtml = 
     "<iframe src=""" & _BaseURL & "?theme=cyber&mode=globe&data=" & "{%22sites%22:" & _EncodedJson & "}" & """ " &
-    "style=""width:100%; height:100%; min-height:650px; border:none; border-radius:12px; overflow:hidden;"" " &
+    "style=""width:100%; height:100%; min-height:580px; border:none; border-radius:12px; background:transparent; overflow:hidden;"" " &
     "allow=""fullscreen""></iframe>"
 
 RETURN 
     _IframeHtml
-
-
-// ------------------------------------------------------------------------------
-// OPTION B: Fully Self-Contained Offline DAX Visual (Zero External Web Hosting)
-// ------------------------------------------------------------------------------
-3D_Map_Standalone_Offline = 
-VAR _SitesJson = 
-    "[" & 
-    CONCATENATEX(
-        'SiteData',
-        "{" &
-            """id"": """ & 'SiteData'[SiteID] & """," &
-            """name"": """ & SUBSTITUTE('SiteData'[SiteName], """", "\""") & """," &
-            """country"": """ & 'SiteData'[Country] & """," &
-            """region"": """ & 'SiteData'[Region] & """," &
-            """lat"": " & 'SiteData'[Latitude] & "," &
-            """lon"": " & 'SiteData'[Longitude] & "," &
-            """val"": " & FORMAT('SiteData'[MetricValue], "0.0") & "," &
-            """status"": """ & 'SiteData'[Status] & """" &
-        "}",
-        ","
-    ) & 
-    "]"
-
-RETURN 
-    "<div style=""width:100%; height:100%; min-height:600px; position:relative;"">" &
-    "  <iframe id=""pbi3dFrame"" src=""about:blank"" style=""width:100%; height:100%; border:none; border-radius:12px;""></iframe>" &
-    "  <script>" &
-    "    var pbiData = { sites: " & _SitesJson & " };" &
-    "    console.log('Power BI Real-Time Data Injected:', pbiData);" &
-    "  </script>" &
-    "</div>"
