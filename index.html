@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Power BI 3D Dynamic Multi-Mode Map Visual</title>
+  <title>ACWA DGA 3D Geospatial Digital Twin</title>
   
   <!-- Font & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Stylesheet -->
@@ -20,39 +20,41 @@
 </head>
 <body class="theme-cyber">
 
-  <!-- 3D Canvas Mount Point -->
+  <!-- 3D WebGL Canvas Mount Point -->
   <div id="canvas3d"></div>
 
   <!-- Heads-Up Display (HUD) Overlay -->
   <div class="hud-layer">
     
-    <!-- Top Navigation Bar -->
+    <!-- Top Navigation & Brand Bar -->
     <header class="top-bar hud-interactive">
       <div class="brand-badge">
-        <i class="fa-solid fa-bolt brand-icon"></i>
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
         <div class="brand-text">
-          <h1>ACWA DGA 3D GEOSPATIAL MAP</h1>
-          <span>Transformer Fleet Intelligence Dashboard</span>
+          <h1>ACWA POWER &bull; DGA 3D DIGITAL TWIN</h1>
+          <span>Global Transformer Fleet Geospatial Intelligence</span>
         </div>
       </div>
 
       <!-- Mode Selector Pills -->
       <nav class="mode-nav" aria-label="Visual Modes">
-        <button class="mode-btn active" data-mode="globe" title="3D Earth Orbit View">
+        <button class="mode-btn active" data-mode="globe" title="3D Earth Orbit & Site Pillars">
           <i class="fa-solid fa-globe"></i>
-          <span>Globe 3D</span>
+          <span>Global Fleet</span>
         </button>
-        <button class="mode-btn" data-mode="choropleth" title="3D Extruded Provinces/Regions">
-          <i class="fa-solid fa-layer-group"></i>
-          <span>3D Choropleth</span>
+        <button class="mode-btn" data-mode="choropleth" title="3D Regional Country Pedestals">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Regional Pedestals</span>
         </button>
-        <button class="mode-btn" data-mode="city" title="3D Cyber City / KLCC Campus">
-          <i class="fa-solid fa-city"></i>
-          <span>3D Cyber City</span>
+        <button class="mode-btn" data-mode="twin" title="3D Transformer Substation Digital Twin">
+          <i class="fa-solid fa-microchip"></i>
+          <span>Asset Digital Twin</span>
         </button>
-        <button class="mode-btn" data-mode="flow" title="Global Arc & Network Flow">
-          <i class="fa-solid fa-route"></i>
-          <span>Arc Flow</span>
+        <button class="mode-btn" data-mode="heatmap" title="DGA Gas & Thermal Risk Density">
+          <i class="fa-solid fa-fire-flame-curved"></i>
+          <span>Risk Heatmap</span>
         </button>
       </nav>
 
@@ -60,13 +62,13 @@
       <div class="controls-cluster">
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="siteSearch" placeholder="Search site or region..." autocomplete="off">
+          <input type="text" id="siteSearch" placeholder="Search plant or cluster..." autocomplete="off">
         </div>
         <button class="icon-btn" id="btnToggleRotate" title="Toggle Auto-Rotation">
           <i class="fa-solid fa-arrows-rotate"></i>
         </button>
-        <button class="icon-btn" id="btnToggleTheme" title="Switch Theme (Cyber / Satellite / Executive)">
-          <i class="fa-solid fa-palette"></i>
+        <button class="icon-btn" id="btnResetView" title="Reset Camera View">
+          <i class="fa-solid fa-crosshairs"></i>
         </button>
         <button class="icon-btn" id="btnFullscreen" title="Toggle Fullscreen">
           <i class="fa-solid fa-expand"></i>
@@ -74,79 +76,83 @@
       </div>
     </header>
 
-    <!-- Top KPI Cards Deck -->
-    <div class="kpi-row hud-interactive">
-      <div class="kpi-card">
-        <div class="kpi-title">Connected Plants</div>
-        <div class="kpi-val">
-          <span id="kpiTotalSites">29</span>
-          <span class="kpi-trend up"><i class="fa-solid fa-solar-panel"></i> Live</span>
+    <!-- Interactive DGA Treemap Status Filter Bar (Matching Power BI Dashboard) -->
+    <div class="dga-filter-bar hud-interactive">
+      <div class="dga-filter-tab all active" data-filter="all" title="Show All 2,474 Transformers">
+        <span class="dga-tab-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <div class="dga-tab-info">
+          <span class="dga-tab-label">Total Fleet</span>
+          <span class="dga-tab-val">2,474</span>
         </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Tested Transformers</div>
-        <div class="kpi-val">
-          <span id="kpiAvgHealth">2,056</span>
-          <span class="kpi-trend up"><i class="fa-solid fa-circle-check"></i> Monitored</span>
+      <div class="dga-filter-tab warning" data-filter="warning" title="Filter to 1,301 Warning Transformers">
+        <span class="dga-tab-icon yellow"></span>
+        <div class="dga-tab-info">
+          <span class="dga-tab-label">Warning</span>
+          <span class="dga-tab-val">1,301 <small>(52.6%)</small></span>
         </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Regional Interlinks</div>
-        <div class="kpi-val">
-          <span id="kpiNetworkArcs">9</span>
-          <span class="kpi-trend up"><i class="fa-solid fa-bolt"></i> Active</span>
+      <div class="dga-filter-tab normal" data-filter="normal" title="Filter to 788 Normal Transformers">
+        <span class="dga-tab-icon green"></span>
+        <div class="dga-tab-info">
+          <span class="dga-tab-label">Normal</span>
+          <span class="dga-tab-val">788 <small>(31.9%)</small></span>
+        </div>
+      </div>
+      <div class="dga-filter-tab danger" data-filter="danger" title="Filter to 385 Critical Danger Transformers">
+        <span class="dga-tab-icon red"></span>
+        <div class="dga-tab-info">
+          <span class="dga-tab-label">Danger</span>
+          <span class="dga-tab-val">385 <small>(15.5%)</small></span>
         </div>
       </div>
     </div>
 
-    <!-- Bottom HUD Bar -->
+    <!-- Bottom Action & Telemetry HUD Bar -->
     <footer class="bottom-bar">
-      <!-- Gradient Scale Legend -->
-      <div class="legend-card hud-interactive">
-        <div class="legend-title">KPI Metric Distribution</div>
-        <div class="legend-gradient"></div>
-        <div class="legend-labels">
-          <span>0% Baseline</span>
-          <span>50% Mid</span>
-          <span>100% Peak</span>
+      <!-- Active Plant Quick HUD Card -->
+      <div class="telemetry-card hud-interactive" id="activeSiteCard">
+        <div class="telemetry-header">
+          <div class="telemetry-site-title" id="hudSiteName">Sudair Mega Solar Park</div>
+          <span class="status-pill danger" id="hudStatusBadge">Danger Alert</span>
+        </div>
+        <div class="telemetry-sub" id="hudSiteSub">Eastern Cluster &bull; KSA &bull; 1500MW Solar Complex</div>
+        <div class="telemetry-grid">
+          <div class="t-cell">
+            <span class="t-lbl">Tested Fleet</span>
+            <span class="t-num" id="hudTestedCount">279 / 282</span>
+          </div>
+          <div class="t-cell normal">
+            <span class="t-lbl">Normal (G)</span>
+            <span class="t-num" id="hudNormalCount">203</span>
+          </div>
+          <div class="t-cell warning">
+            <span class="t-lbl">Warning (Y)</span>
+            <span class="t-num" id="hudWarningCount">33</span>
+          </div>
+          <div class="t-cell danger">
+            <span class="t-lbl">Danger (R)</span>
+            <span class="t-num" id="hudDangerCount">43</span>
+          </div>
         </div>
       </div>
 
-      <!-- Live Dynamic Controller Drawer -->
-      <div class="data-controller hud-interactive collapsed">
-        <div class="controller-header">
-          <h3><i class="fa-solid fa-sliders"></i> Dynamic Value Controller</h3>
-          <i class="fa-solid fa-chevron-up"></i>
+      <!-- Quick Legend & Navigation Guide -->
+      <div class="nav-legend-card hud-interactive">
+        <div class="legend-row">
+          <span class="legend-chip danger"><span class="dot red"></span> Danger Alert</span>
+          <span class="legend-chip warning"><span class="dot yellow"></span> DGA Warning</span>
+          <span class="legend-chip normal"><span class="dot green"></span> Normal Healthy</span>
         </div>
-        <div class="controller-body">
-          <div class="ctrl-item">
-            <label>Punjab KPI Index <span id="sliderPunjabVal">88.5%</span></label>
-            <input type="range" id="sliderPunjab" min="10" max="100" value="88.5" step="0.5">
-          </div>
-          <div class="ctrl-item">
-            <label>Sindh KPI Index <span id="sliderSindhVal">72.3%</span></label>
-            <input type="range" id="sliderSindh" min="10" max="100" value="72.3" step="0.5">
-          </div>
-          <div class="ctrl-item">
-            <label>Khyber Pakhtunkhwa <span id="sliderKPKVal">64.8%</span></label>
-            <input type="range" id="sliderKPK" min="10" max="100" value="64.8" step="0.5">
-          </div>
-          <div class="ctrl-item">
-            <label>Balochistan Index <span id="sliderBalochistanVal">52.0%</span></label>
-            <input type="range" id="sliderBalochistan" min="10" max="100" value="52.0" step="0.5">
-          </div>
-          <div class="quick-actions">
-            <button class="action-btn-sm" onclick="switchMode('globe')">🌐 Globe</button>
-            <button class="action-btn-sm" onclick="switchMode('choropleth')">🗺️ 3D Map</button>
-            <button class="action-btn-sm" onclick="switchMode('city')">🏙️ 3D City</button>
-          </div>
+        <div class="nav-hint">
+          <i class="fa-solid fa-computer-mouse"></i> Left-drag: Orbit &bull; Scroll: Zoom &bull; Right-drag: Pan &bull; Click: Inspect
         </div>
       </div>
     </footer>
 
   </div>
 
-  <!-- Interactive 3D Tooltip Card -->
+  <!-- Rich Glassmorphic 3D Hover Card -->
   <div id="tooltip3d">
     <div class="tooltip-header">
       <div class="tooltip-title" id="ttTitle">Site Name</div>
@@ -171,7 +177,7 @@
     </div>
     <div class="tooltip-val-row">
       <div class="meter-info">
-        <span class="tooltip-val-label">Tested Fleet</span>
+        <span class="tooltip-val-label">Tested Fleet Compliance</span>
         <span class="tooltip-ratio"><span id="ttTestedNum">0</span> / <span id="ttTotalNum">0</span></span>
       </div>
       <div class="progress-bar-bg">
