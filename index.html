@@ -150,12 +150,33 @@
   <div id="tooltip3d">
     <div class="tooltip-header">
       <div class="tooltip-title" id="ttTitle">Site Name</div>
-      <div class="tooltip-badge" id="ttBadge">Operational</div>
+      <div class="tooltip-badge" id="ttBadge">Normal</div>
     </div>
-    <div class="tooltip-meta" id="ttMeta">Region, Country</div>
+    <div class="tooltip-location-line" id="ttLocLine">
+      <span id="ttCountry">KSA</span> &bull; <span id="ttRegion">Region</span> &bull; <span id="ttCluster">Cluster</span>
+    </div>
+    <div class="tooltip-serial-line" id="ttSerialLine" style="display:none;">
+      <i class="fa-solid fa-barcode"></i> Serial: <span id="ttSerial">--</span>
+    </div>
+    <div class="tooltip-stats-grid">
+      <div class="stat-pill normal">
+        <span class="dot green"></span> Normal: <strong id="ttNormalCount">0</strong>
+      </div>
+      <div class="stat-pill warning">
+        <span class="dot yellow"></span> Warning: <strong id="ttWarningCount">0</strong>
+      </div>
+      <div class="stat-pill danger">
+        <span class="dot red"></span> Danger: <strong id="ttDangerCount">0</strong>
+      </div>
+    </div>
     <div class="tooltip-val-row">
-      <span class="tooltip-val-label" id="ttValLabel">Metric Value</span>
-      <span class="tooltip-val-num" id="ttValNum">98.4%</span>
+      <div class="meter-info">
+        <span class="tooltip-val-label">Tested Fleet</span>
+        <span class="tooltip-ratio"><span id="ttTestedNum">0</span> / <span id="ttTotalNum">0</span></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="ttProgressBar" style="width: 100%;"></div>
+      </div>
     </div>
   </div>
 

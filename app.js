@@ -1031,24 +1031,35 @@ function buildGlobeMode() {
     pinGroup.position.copy(pos);
     pinGroup.lookAt(new THREE.Vector3(0, 0, 0));
 
+    // Determine site status color
+    let siteHexColor = 0x5a9f6c; // Normal (Green)
+    if (site.danger && site.danger > 0) {
+      siteHexColor = 0xd96355; // Danger (Red)
+    } else if (site.warning && site.warning > 0) {
+      siteHexColor = 0xc18729; // Warning (Gold/Amber)
+    } else if (site.val > 200) {
+      siteHexColor = 0x00f0ff; // Major Solar Park
+    }
+
     // Outer Radar Pulse Ring
-    const ringGeo = new THREE.RingGeometry(0.6, 0.9, 32);
+    const ringGeo = new THREE.RingGeometry(0.7, 1.1, 32);
     const ringMat = new THREE.MeshBasicMaterial({
-      color: site.val > 90 ? 0x00f0ff : (site.val > 75 ? 0x10b981 : 0xf59e0b),
+      color: siteHexColor,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.9
+      opacity: 0.95
     });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     pinGroup.add(ringMesh);
 
-    // Vertical Core Pin Pillar
-    const pillarGeo = new THREE.CylinderGeometry(0.35, 0.15, (site.val / 100) * 8 + 2, 16);
-    pillarGeo.translate(0, ((site.val / 100) * 8 + 2) / 2, 0);
+    // Vertical Core Pin Pillar (Height scaled by Tested count)
+    const pillarHeight = Math.min(Math.max((site.val / 300) * 12 + 3, 3.5), 16);
+    const pillarGeo = new THREE.CylinderGeometry(0.4, 0.2, pillarHeight, 16);
+    pillarGeo.translate(0, pillarHeight / 2, 0);
     const pillarMat = new THREE.MeshStandardMaterial({
-      color: site.val > 90 ? 0x00f0ff : (site.val > 75 ? 0x10b981 : 0xf59e0b),
-      emissive: site.val > 90 ? 0x00a0cc : 0x065f46,
-      emissiveIntensity: 0.6,
+      color: siteHexColor,
+      emissive: new THREE.Color(siteHexColor).multiplyScalar(0.4),
+      emissiveIntensity: 0.7,
       roughness: 0.2,
       metalness: 0.8
     });
@@ -1058,19 +1069,27 @@ function buildGlobeMode() {
     pinGroup.add(pillarMesh);
 
     // Glowing Sphere Cap
-    const capGeo = new THREE.SphereGeometry(0.6, 16, 16);
+    const capGeo = new THREE.SphereGeometry(0.65, 16, 16);
     const capMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const capMesh = new THREE.Mesh(capGeo, capMat);
-    capMesh.position.set(0, 0, -((site.val / 100) * 8 + 2));
+    capMesh.position.set(0, 0, -pillarHeight);
     pinGroup.add(capMesh);
 
-    // Store reference for Raycasting
+    // Floating Site Name Tag on Map
+    const siteTag = makeMiniSiteLabel(site.name, site.val);
+    siteTag.position.set(0, 1.8, -pillarHeight - 1.2);
+    pinGroup.add(siteTag);
+
+    // Store reference for Raycasting & Filtering
     pillarMesh.userData = { site: site, type: 'site' };
-    pinGroup.userData = { site: site, ring: ringMesh, initialScale: 1 };
+    pinGroup.userData = { site: site, ring: ringMesh, tag: siteTag, initialScale: 1 };
 
     State.sitePins.push(pinGroup);
     State.globeGroup.add(pinGroup);
   });
+
+  // Add 3D Country Billboard Labels on Globe
+  buildCountryLabelsOnGlobe();
 
   // Dynamic Arcs between sites on Globe
   buildArcsOnGlobe();
@@ -1530,6 +1549,69 @@ window.addEventListener('message', event => {
 });
 
 // Check URL Params for Data or Theme Injection
+
+// Parse Hash and URL Parameters for Real-time Power BI Slicing
+function applyPowerBiFiltering() {
+  let hashStr = window.location.hash;
+  if (!hashStr || hashStr.length <= 1) return;
+  hashStr = hashStr.substring(1); // remove '#'
+
+  try {
+    const params = new URLSearchParams(hashStr);
+    const dataStr = params.get('data');
+    if (!dataStr) return;
+
+    const payload = JSON.parse(decodeURIComponent(dataStr));
+    const incomingSites = payload.sites || payload;
+
+    if (Array.isArray(incomingSites) && incomingSites.length > 0) {
+      // 1. Filter Site Pins: Show ONLY the filtered sites
+      const allowedNames = new Set(incomingSites.map(s => s.name.toLowerCase()));
+      const allowedIds = new Set(incomingSites.map(s => s.id.toLowerCase()));
+
+      let visibleCount = 0;
+      let sumLat = 0;
+      let sumLon = 0;
+
+      State.sitePins.forEach(pin => {
+        const s = pin.userData.site;
+        const matches = allowedNames.has(s.name.toLowerCase()) || allowedIds.has(s.id.toLowerCase());
+        pin.visible = matches;
+
+        if (matches) {
+          visibleCount++;
+          sumLat += s.lat;
+          sumLon += s.lon;
+
+          // Merge incoming metrics (tested, total, normal, warning, danger, serial)
+          const inc = incomingSites.find(x => x.id.toLowerCase() === s.id.toLowerCase() || x.name.toLowerCase() === s.name.toLowerCase());
+          if (inc) {
+            Object.assign(s, inc);
+          }
+        }
+      });
+
+      // 2. Camera Fly-To: Focus on the filtered site or country cluster
+      if (visibleCount === 1) {
+        const targetLat = sumLat;
+        const targetLon = sumLon;
+        const pos = latLonToVector3(targetLat, targetLon, GLOBE_RADIUS, 12);
+        flyToCamera(pos, new THREE.Vector3(0, 0, 0), 1000);
+      } else if (visibleCount > 1 && visibleCount < 25) {
+        const avgLat = sumLat / visibleCount;
+        const avgLon = sumLon / visibleCount;
+        const pos = latLonToVector3(avgLat, avgLon, GLOBE_RADIUS, 22);
+        flyToCamera(pos, new THREE.Vector3(0, 0, 0), 1000);
+      }
+    }
+  } catch (err) {
+    console.warn("Hash filter parse error:", err);
+  }
+}
+
+// Listen for Power BI Slicer Hash Changes
+window.addEventListener('hashchange', applyPowerBiFiltering);
+
 function checkUrlParams() {
   const params = new URLSearchParams(window.location.search);
   const themeParam = params.get('theme');
@@ -1638,6 +1720,83 @@ function onMouseMove(event) {
   document.body.style.cursor = 'default';
 }
 
+
+// Create Mini Floating Site Label Sprite
+function makeMiniSiteLabel(name, val) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 180;
+  canvas.height = 56;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = 'rgba(7, 15, 35, 0.85)';
+  ctx.strokeStyle = 'rgba(0, 240, 255, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(4, 4, 172, 48, 8);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 18px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  const shortName = name.length > 13 ? name.substring(0, 11) + '..' : name;
+  ctx.fillText(shortName, 90, 26);
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 15px Inter, sans-serif';
+  ctx.fillText(`${val} Tested`, 90, 44);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(4.2, 1.4, 1);
+  return sprite;
+}
+
+// Billboard Country Names Floating Over Earth
+function buildCountryLabelsOnGlobe() {
+  const countryCentroids = [
+    { name: "SAUDI ARABIA", lat: 24.5, lon: 45.0 },
+    { name: "UAE", lat: 24.2, lon: 54.5 },
+    { name: "EGYPT", lat: 26.5, lon: 30.5 },
+    { name: "MOROCCO", lat: 31.5, lon: -7.5 },
+    { name: "OMAN", lat: 21.5, lon: 57.0 },
+    { name: "JORDAN", lat: 31.2, lon: 36.5 },
+    { name: "UZBEKISTAN", lat: 41.5, lon: 64.0 },
+    { name: "CHINA", lat: 34.0, lon: 105.0 }
+  ];
+
+  countryCentroids.forEach(c => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(6, 6, 244, 52, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 22px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '2px';
+    ctx.fillText(c.name, 128, 38);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(mat);
+    sprite.scale.set(7.5, 2.0, 1);
+
+    const pos = latLonToVector3(c.lat, c.lon, GLOBE_RADIUS, 1.8);
+    sprite.position.copy(pos);
+    State.globeGroup.add(sprite);
+  });
+}
+
 function showTooltip(x, y, data, type) {
   tooltip.style.left = `${x}px`;
   tooltip.style.top = `${y}px`;
@@ -1645,24 +1804,57 @@ function showTooltip(x, y, data, type) {
 
   const titleEl = document.getElementById('ttTitle');
   const badgeEl = document.getElementById('ttBadge');
-  const metaEl = document.getElementById('ttMeta');
-  const valLabelEl = document.getElementById('ttValLabel');
-  const valNumEl = document.getElementById('ttValNum');
+  const countryEl = document.getElementById('ttCountry');
+  const regionEl = document.getElementById('ttRegion');
+  const clusterEl = document.getElementById('ttCluster');
+  const serialLineEl = document.getElementById('ttSerialLine');
+  const serialEl = document.getElementById('ttSerial');
+  const normalEl = document.getElementById('ttNormalCount');
+  const warningEl = document.getElementById('ttWarningCount');
+  const dangerEl = document.getElementById('ttDangerCount');
+  const testedEl = document.getElementById('ttTestedNum');
+  const totalEl = document.getElementById('ttTotalNum');
+  const progressEl = document.getElementById('ttProgressBar');
 
-  if (type === 'province') {
-    titleEl.textContent = data.name;
-    badgeEl.textContent = 'Province / Region';
-    badgeEl.className = 'tooltip-badge';
-    metaEl.textContent = `Capital: ${data.capital} | Lat: ${data.center[1]}, Lon: ${data.center[0]}`;
-    valLabelEl.textContent = 'Regional Index';
-    valNumEl.textContent = `${data.val}%`;
+  titleEl.textContent = data.name || 'Plant Location';
+  countryEl.textContent = data.country || 'ACWA';
+  regionEl.textContent = data.region || 'Region';
+  clusterEl.textContent = data.cluster || 'Cluster';
+
+  // Serial No display if filtered
+  if (data.serial && data.serial !== '') {
+    serialLineEl.style.display = 'block';
+    serialEl.textContent = data.serial;
   } else {
-    titleEl.textContent = data.name;
-    badgeEl.textContent = data.status || 'Active';
-    badgeEl.className = `tooltip-badge ${data.status === 'Active Project' ? 'warning' : ''}`;
-    metaEl.textContent = `${data.region || ''}, ${data.country || ''} | ${data.type || 'Facility'}`;
-    valLabelEl.textContent = data.kpi_label || 'Performance KPI';
-    valNumEl.textContent = data.kpi_formatted || `${data.val}%`;
+    serialLineEl.style.display = 'none';
+  }
+
+  // Status Counts
+  const normalCount = data.normal || Math.floor((data.val || 20) * 0.4);
+  const warningCount = data.warning || Math.floor((data.val || 20) * 0.45);
+  const dangerCount = data.danger || Math.max(0, (data.val || 20) - normalCount - warningCount);
+  const totalCount = data.total || (data.val || 20);
+  const testedCount = data.val || totalCount;
+
+  normalEl.textContent = normalCount;
+  warningEl.textContent = warningCount;
+  dangerEl.textContent = dangerCount;
+  testedEl.textContent = testedCount;
+  totalEl.textContent = totalCount;
+
+  const pct = Math.min(Math.round((testedCount / (totalCount || 1)) * 100), 100);
+  progressEl.style.width = `${pct}%`;
+
+  // Badge Color & Title
+  if (dangerCount > 0) {
+    badgeEl.textContent = 'Danger';
+    badgeEl.className = 'tooltip-badge danger';
+  } else if (warningCount > 0) {
+    badgeEl.textContent = 'Warning';
+    badgeEl.className = 'tooltip-badge warning';
+  } else {
+    badgeEl.textContent = 'Normal';
+    badgeEl.className = 'tooltip-badge';
   }
 }
 
@@ -1844,6 +2036,7 @@ function init() {
   setupUI();
   updateKpiDeck();
   checkUrlParams();
+  applyPowerBiFiltering();
   animate();
   console.log("Power BI 3D Dynamic Multi-Mode Map Engine loaded successfully.");
 }
